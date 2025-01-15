@@ -1,0 +1,24 @@
+# Projet DevOps - Entraînement avec Vagrant
+
+## Description
+Ce dossier contient des fichiers et des configurations pour s'entraîner à utiliser Vagrant, un outil permettant de créer et gérer des environnements de machines virtuelles de manière reproductible.
+
+## Objectifs
+- Apprendre à configurer des machines virtuelles avec Vagrant.
+- Comprendre comment utiliser des fichiers `Vagrantfile` pour définir des environnements.
+- Automatiser la création et la gestion des environnements de développement.
+
+## Contenu du dossier
+- **Vagrantfile** : Le fichier principal utilisé par Vagrant pour configurer les machines virtuelles.
+- **Scripts de provisionnement** (si présents) : Scripts (comme des fichiers `.sh` ou `.ps1`) pour automatiser l'installation de logiciels ou la configuration des machines.
+- **Dossiers partagés** : Répertoires qui permettent de partager des fichiers entre votre machine hôte et les machines virtuelles.
+
+## Prérequis
+- Installer [Vagrant](https://www.vagrantup.com/).
+- Installer un fournisseur de virtualisation comme [VirtualBox](https://www.virtualbox.org/).
+
+## Commandes utiles
+- `vagrant up` : Démarre la machine virtuelle définie dans le `Vagrantfile`.
+- `vagrant halt` : Arrête la machine virtuelle.
+- `vagrant destroy` : Supprime la machine virtuelle.
+- `vagrant ssh` : Accède à la machine virtuelle via SSH.

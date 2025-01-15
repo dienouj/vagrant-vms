@@ -1,0 +1,9 @@
+# Ignore tous les dossiers .vagrant partout
+**/.vagrant/
+
+# Optionnel : ignore les box et clés éventuelles
+*.box
+*.key
+*.pem
+*.log
+
