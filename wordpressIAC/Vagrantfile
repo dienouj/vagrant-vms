@@ -1,0 +1,91 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# All Vagrant configuration is done below. The "2" in Vagrant.configure
+# configures the configuration version (we support older styles for
+# backwards compatibility). Please don't change it unless you know what
+# you're doing.
+Vagrant.configure("2") do |config|
+    # Set the base box to Ubuntu 20.04 (Focal Fossa)
+    config.vm.box = "ubuntu/focal64"
+
+    # Configure a private network with a specific IP address
+    config.vm.network "private_network", ip: "192.168.56.30"
+
+    # Configure a public network for the VM
+    config.vm.network "public_network"
+
+    # Configure the VirtualBox provider with specific settings
+    config.vm.provider "virtualbox" do |vb|
+        # Set the memory allocation for the VM to 1600 MB
+        vb.memory = "1600"
+    end
+
+    # Provision the VM with a shell script to install and configure WordPress
+    config.vm.provision "shell", inline: <<-SHELL
+        # Update the package list
+        sudo apt update 
+
+        # Install Apache, MySQL, PHP, and required PHP extensions
+        sudo apt install apache2 \
+                                         ghostscript \
+                                         libapache2-mod-php \
+                                         mysql-server \
+                                         php \
+                                         php-bcmath \
+                                         php-curl \
+                                         php-imagick \
+                                         php-intl \
+                                         php-json \
+                                         php-mbstring \
+                                         php-mysql \
+                                         php-xml \
+                                         php-zip -y
+
+        # Create the directory for WordPress and set permissions
+        sudo mkdir -p /srv/www
+        sudo chown www-data: /srv/www
+
+        # Download and extract the latest WordPress version
+        curl https://wordpress.org/latest.tar.gz | sudo -u www-data tar zx -C /srv/www
+
+        # Configure Apache for WordPress
+        cat > /etc/apache2/sites-available/wordpress.conf <<EOF
+<VirtualHost *:80>
+        DocumentRoot /srv/www/wordpress
+        <Directory /srv/www/wordpress>
+                Options FollowSymLinks
+                AllowOverride Limit Options FileInfo
+                DirectoryIndex index.php
+                Require all granted
+        </Directory>
+        <Directory /srv/www/wordpress/wp-content>
+                Options FollowSymLinks
+                Require all granted
+        </Directory>
+</VirtualHost>
+EOF
+
+        # Enable the WordPress site and necessary Apache modules
+        sudo a2ensite wordpress
+        sudo a2enmod rewrite
+        sudo a2dissite 000-default
+
+        # Configure MySQL for WordPress
+        mysql -u root -e 'CREATE DATABASE wordpress;'
+        mysql -u root -e 'CREATE USER wordpress@localhost IDENTIFIED BY "admin123";'
+        mysql -u root -e 'GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,ALTER ON wordpress.* TO wordpress@localhost;'   
+        mysql -u root -e 'FLUSH PRIVILEGES;'
+
+        # Configure WordPress settings
+        sudo -u www-data cp /srv/www/wordpress/wp-config-sample.php /srv/www/wordpress/wp-config.php
+        sudo -u www-data sed -i 's/database_name_here/wordpress/' /srv/www/wordpress/wp-config.php
+        sudo -u www-data sed -i 's/username_here/wordpress/' /srv/www/wordpress/wp-config.php
+        sudo -u www-data sed -i 's/password_here/admin123/' /srv/www/wordpress/wp-config.php
+
+        # Restart MySQL and Apache services
+        systemctl restart mysql
+        systemctl restart apache2
+    SHELL
+end
+  
