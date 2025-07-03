@@ -1,7 +1,7 @@
 # Projet DevOps - Entraînement avec Vagrant
 
 ## Description
-Ce dossier contient des fichiers et des configurations pour s'entraîner à utiliser **Vagrant**, un outil permettant de créer et gérer des environnements de machines virtuelles de manière reproductible.
+Ce dossier contient des fichiers et des configurations pour s'entraîner à utiliser Vagrant, un outil permettant de créer et gérer des environnements de machines virtuelles de manière reproductible.
 
 ## Objectifs
 - Apprendre à configurer des machines virtuelles avec Vagrant.
